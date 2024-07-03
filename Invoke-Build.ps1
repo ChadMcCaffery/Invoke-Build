@@ -374,9 +374,10 @@ function Write-Build([ConsoleColor]$Color, [string]$Text) {
 	*Write $Color ($Text -split '\r\n|[\r\n]')
 }
 
-if ($PSVersionTable.PSVersion -ge [Version]'7.2' -and $PSStyle.OutputRendering -ne 'PlainText') {
+if ($Host.UI.SupportsVirtualTerminal -and $PSStyle.OutputRendering -notin ('PlainText',$null)) {
 	function *Write($C, $T) {
-		$f = "`e[$((30,34,32,36,31,35,33,37,90,94,92,96,91,95,93,97)[$C])m{0}`e[0m"
+		$e = [char]27
+		$f = "$e[$((30,34,32,36,31,35,33,37,90,94,92,96,91,95,93,97)[$C])m{0}$e[0m"
 		foreach($_ in $T) {
 			$f -f $_
 		}
